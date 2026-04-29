@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diabetes Prediction</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f0f4f8;
+      --card: #ffffff;
+      --accent: #1a56db;
+      --accent2: #e53e3e;
+      --text: #1a202c;
+      --muted: #718096;
+      --border: #e2e8f0;
+      --positive: #c53030;
+      --negative: #276749;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+      color: var(--text);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.4rem;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 40px;
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      transition: border-color 0.2s;
+      background: #f8fafc;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: #fff;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: #a0aec0;
+    }
+
+    button[type=submit] {
+      margin-top: 28px;
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button[type=submit]:hover { background: #1741b8; }
+    button[type=submit]:active { transform: scale(0.98); }
+
+    .result {
+      margin-top: 24px;
+      padding: 18px 24px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .result.positive { background: #fff5f5; color: var(--positive); border: 1.5px solid #feb2b2; }
+    .result.negative { background: #f0fff4; color: var(--negative); border: 1.5px solid #9ae6b4; }
+    .result.error    { background: #fffbeb; color: #92400e; border: 1.5px solid #fcd34d; }
+
+    @media (max-width: 500px) {
+      .grid { grid-template-columns: 1fr; }
+      .card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🩺 Diabetes Prediction</h1>
+    <p>Enter patient details below to predict diabetes risk using ML</p>
+  </header>
+
+  <div class="card">
+    <form action="/predict" method="POST">
+      <div class="grid">
+
+        <div class="field">
+          <label>Pregnancies</label>
+          <input type="number" name="pregnancies" placeholder="e.g. 2" min="0" required />
+        </div>
+
+        <div class="field">
+          <label>Glucose</label>
+          <input type="number" name="glucose" placeholder="e.g. 120" min="0" required />
+          <span class="hint">mg/dL</span>
+        </div>
+
+        <div class="field">
+          <label>Blood Pressure</label>
+          <input type="number" name="blood_pressure" placeholder="e.g. 70" min="0" required />
+          <span class="hint">mm Hg</span>
+        </div>
+
+        <div class="field">
+          <label>Skin Thickness</label>
+          <input type="number" name="skin_thickness" placeholder="e.g. 20" min="0" required />
+          <span class="hint">mm</span>
+        </div>
+
+        <div class="field">
+          <label>Insulin</label>
+          <input type="number" name="insulin" placeholder="e.g. 80" min="0" required />
+          <span class="hint">mu U/ml</span>
+        </div>
+
+        <div class="field">
+          <label>BMI</label>
+          <input type="number" step="0.1" name="bmi" placeholder="e.g. 28.5" min="0" required />
+          <span class="hint">kg/m²</span>
+        </div>
+
+        <div class="field">
+          <label>Diabetes Pedigree</label>
+          <input type="number" step="0.001" name="dpf" placeholder="e.g. 0.351" min="0" required />
+          <span class="hint">Function value</span>
+        </div>
+
+        <div class="field">
+          <label>Age</label>
+          <input type="number" name="age" placeholder="e.g. 30" min="1" required />
+          <span class="hint">Years</span>
+        </div>
+
+      </div>
+
+      <button type="submit">Predict</button>
+    </form>
+
+    {% if prediction %}
+    <div class="result {{ result_class }}">
+      {% if result_class == 'positive' %}⚠️{% elif result_class == 'negative' %}✅{% else %}❌{% endif %}
+      Result: <strong>{{ prediction }}</strong>
+    </div>
+    {% endif %}
+  </div>
+
+</body>
+</html>
